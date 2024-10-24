@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFE 2025 - Rendu Nomenclature</title>
+
+    <meta name="pageType" content="GameDevTool">
+    <meta name="description" content="a simple and effective tool to name the files according to the milestones. Unofficial Tool for PFE 2025">
+    <meta name="author" content="Louis/Loé BERTRAND louisgjbertrand@icloud.com">
+
+    <style>
+
+        *{
+            margin: 0px;
+            padding: 0px;
+
+            font-family: sans-serif;
+            font-weight: 100;
+        }
+
+
+        body
+        {
+            background-color: #f5f5f5;
+            padding: min(50px, 5%);
+        }
+        h1
+        {
+            margin-bottom: 10px;
+        }
+
+        pre
+        {
+            margin: 10px;
+            font-family: monospace;
+            background-color: #eee;
+            border: 1px solid #aaa;
+            color: #aaa;
+            padding: 20px;
+        }
+
+        .alert_box_warning{
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            color: White;
+            background-color: red;
+            font-size: 2em;
+        }
+
+        select, input, button
+        {
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid #aaa;
+            color: #333;
+            margin-top: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        select:hover, input:hover, button:hover
+        {
+
+            background-color: #f0f0f0;
+
+        }
+        select:active, input:active, button:active
+        {
+
+            background-color: #ccc;
+
+        }
+
+    </style>
+
+</head>
+<body>
+    
+    <script>
+
+        ProjectList = [
+            "Candle Knight",
+            "Cartographer",
+            "Criterium",
+            "Dimension Shift",
+            "Escape Atlantis",
+            "Car Combat",
+            "Rythmwreckers",
+            "Roller Loop",
+            "Streak-Out",
+        ]
+
+        Milestones = [
+            "Concept",
+            "3C",
+            "Alpha",
+            "Beta",
+            "Gold"
+        ]
+        standardFormat = "%milestoneDir%/%GameSector%/%MileStoneFile%_%DeliveryID%_%DeliveryName%_%ProjectName%%SingleSuffix%";
+
+
+        function LoadProjectsInProjectsField()
+        {
+            ProjectField = document.getElementById("Project");
+
+            for (let index = 0; index < ProjectList.length; index++) {
+                const el = ProjectList[index];
+
+                // opt_El = document.createElement("option");
+                // opt_EL.value = el.replace(/[^a-zA-Z ]/g, "");
+                // opt_EL.innerText = el;
+
+                str = "<option value=\""+index+"\">"+el+"</option>\n";
+
+                ProjectField.innerHTML += str;
+            }
+        }
+
+        function GetProjectComputedName(ProjectID)
+        {
+            projectName = ProjectList[ProjectID];
+            return projectName.replace(/[^a-zA-Z]/g, "").toUpperCase();
+        }
+
+        function UpdateFinalName()
+        {
+            FinalNameField = document.getElementById("FinalName");
+        
+            GameSectorValue = document.getElementById("GameSector").value;
+            ProjectValue = document.getElementById("Project").value;
+            DeliveryTypeValue = document.getElementById("DeliveryType").value;
+            MilestoneValue = document.getElementById("Milestone").value;
+            DeliveryIDValue = document.getElementById("DeliveryID").value;
+            DeliveryNameValue = document.getElementById("DeliveryName").value;
+            
+            SurnameValue = document.getElementById("Surname").value;
+            NameValue = document.getElementById("Name").value;
+            ClassNameValue = document.getElementById("ClassName").value;
+
+            val =
+                ComputeName(
+                    GameSectorValue,
+                    GetProjectComputedName(ProjectValue),
+                    DeliveryTypeValue,
+                    MilestoneValue,
+                    DeliveryIDValue,
+                    DeliveryNameValue,
+                    standardFormat,
+                    SurnameValue,
+                    NameValue,
+                    ClassNameValue);
+            
+            FinalNameField.value = val;
+            console.log (val)
+        }
+
+        function ComputeName(GameSector, ProjectName, DeliveryType, MilestoneID, DeliveryID, DeliveryName, NamingFormat, UserName="", UserSurName="", UserClass = "")
+        {
+
+
+            milestoneDir = "0"+ (parseInt(MilestoneID)+1) + "_Milestone_" + Milestones[MilestoneID];
+            milestoneFile = "0"+ (parseInt(MilestoneID)+1) + "_Milestone_" + Milestones[MilestoneID].toUpperCase();
+            NamingFormat = NamingFormat.replace("%milestoneDir%", milestoneDir)
+            NamingFormat = NamingFormat.replace("%MileStoneFile%", milestoneFile)
+            NamingFormat = NamingFormat.replace("%DeliveryID%", DeliveryID)
+            NamingFormat = NamingFormat.replace("%DeliveryName%", DeliveryName)
+            NamingFormat = NamingFormat.replace("%ProjectName%", ProjectName)
+
+            
+            if(DeliveryType == "Build")
+            {
+                NamingFormat = NamingFormat.replace("%GameSector%", "BUILDS")
+            }
+            else
+            {
+                NamingFormat = NamingFormat.replace("%GameSector%", GameSector)
+            }
+
+            if(DeliveryType == "Single")
+            {
+                NamingFormat = NamingFormat.replace("%SingleSuffix%", "_"+UserName+"_"+UserSurName+"_"+UserClass)
+            }
+            else{
+                NamingFormat = NamingFormat.replace("%SingleSuffix%", "")
+            }
+
+            return NamingFormat;
+        }
+
+        function CopyTheFinalNameToClipboard()
+        {
+            copyText = document.getElementById("FinalName");
+            
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+
+            navigator.clipboard.writeText(copyText.value);
+        }
+
+    </script>
+
+    <h1>Delivery Naming Tool</h1>
+    <pre>author: Louis/Loé BERTRAND (MGA2A)
+version: v0.0.1
+verification pending (Need Testing)</pre>
+
+    <div class="alert_box_warning"><p>Attention: this tool has not been tested yet. Use at your own risks.</p></div>
+
+    <form onsubmit="UpdateFinalName()" action="#" method="dialog">
+
+        <label for="GameSector">You are in:</label><br>
+        <select name="GameSector" id="GameSector" onchange="UpdateFinalName()">
+            <option value="MPRD">Producer</option>
+            <option value="GA">Game Art</option>
+            <option value="GD">Game Design</option>
+            <option value="GP">Game Programming</option>
+            <option value="GDP">Game Design and Programming</option>
+            <option value="MS">Music and Sound Design</option>
+            <option value="MGM2">Management</option>
+        </select><br><br>
+
+        <label for="Project">Project:</label><br>
+        <select name="Project" id="Project" onchange="UpdateFinalName()">
+        </select><br><br>
+
+        <label for="DeliveryType">Delivery Type:</label><br>
+        <select name="DeliveryType" id="DeliveryType" onchange="UpdateFinalName()">
+            <option value="Single">Singular</option>
+            <option value="Group">Groupe</option>
+            <option value="Build">Build</option>
+        </select><br><br>
+
+        <label for="Milestone">Milestone:<br><span style="font-size: .8em; color:#666">(note: the milestones with "TODO :" are not implemented<br> as they require a special naming convention)</span></label><br>
+        <select name="Milestone" id="Milestone" onchange="UpdateFinalName()">
+            <option value="0">01 Milestone Concept</option>
+            <option value="1">02 Milestone 3C</option>
+            <option value="2">03 Milestone Alpha</option>
+            <option value="3">04 Milestone Beta</option>
+            <option value="4">05 Milestone Gold</option>
+            <option value="-1">TODO : 05 1 LABELLISATION GOLD (wtf?)</option>
+            <option value="-1">TODO : 06 ISART TALENTS</option>
+            <option value="-1">TODO : 07 Closing Kit</option>
+        </select><br><br>
+
+        <label for="DeliveryID">ID for the delivery (ex: E.1): </label>
+        <input type="text" name="DeliveryID" id="DeliveryID" onchange="UpdateFinalName()"><br>
+        <label for="DeliveryName">Delivery Name (ex: Moodboards): </label>
+        <input type="text" name="DeliveryName" id="DeliveryName" onchange="UpdateFinalName()"><br><br><br>
+
+        <span>(for singular deliveries only)</span><br>
+        <label for="Surname">Surname: (nom de famille) </label>
+        <input type="text" name="Surname" id="Surname" onchange="UpdateFinalName()"><br>
+        <label for="Name">Name: (prénom) </label>
+        <input type="text" name="Name" id="Name" onchange="UpdateFinalName()"><br>
+        <label for="ClassName">Class name: (Full Caps no special Chars ex: MGA2A) </label>
+        <input type="text" name="ClassName" id="ClassName" onchange="UpdateFinalName()"><br>
+
+        <script>LoadProjectsInProjectsField()</script>
+
+        <input type="submit" value="Get the delivery path">
+
+    </form>
+    <br><br>
+    <label for="FinalName">Final File Name</label><br>
+    <input type="text" readonly name="FinalName" id="FinalName" style="width: 700px;"><br><button onclick="CopyTheFinalNameToClipboard()">Copy to Clipboard</button>
+
+</body>
+</html>
